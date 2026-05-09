@@ -35,28 +35,32 @@
     <script>
         async function loadLatestPosts() {
     try {
-        // Pythonで生成したJSONファイルを読み込む
         const response = await fetch('posts.json');
         const posts = await response.json();
-
         const feedContainer = document.getElementById('ig-feed');
-        feedContainer.innerHTML = ''; // 中身をリセット
+        
+        if (posts.length === 0) {
+            feedContainer.innerHTML = '<p>JSONの中身が空です（データ取得失敗）</p>';
+            return;
+        }
 
+        feedContainer.innerHTML = ''; 
         posts.forEach(post => {
             const div = document.createElement('div');
             div.className = 'post-card';
+            // 画像が出ない場合に備え、日付を文字で表示させてみる
             div.innerHTML = `
                 <a href="${post.link}" target="_blank">
-                    <img src="${post.url}" alt="Instagram Post" class="post-image">
+                    <img src="${post.url}" alt="Instagram Post" class="post-image" onerror="this.style.display='none'">
+                    <span style="font-size:10px;">${post.date}</span>
                 </a>
             `;
             feedContainer.appendChild(div);
         });
     } catch (error) {
-        console.error("データの読み込みに失敗しました:", error);
+        document.getElementById('ig-feed').innerHTML = '<p>JSONファイルの読み込み自体に失敗しています</p>';
     }
 }
-
 // ページ読み込み時に実行
 loadLatestPosts();
     </script>
