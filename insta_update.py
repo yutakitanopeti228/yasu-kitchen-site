@@ -3,22 +3,21 @@ import json
 import os
 
 def fetch_instagram_posts(username, count=6):
-    # インスタローダーの初期化
-    loader = instaloader.Instaloader()
+    # User-Agentを設定して、ブラウザからのアクセスを装う
+    loader = instaloader.Instaloader(
+        user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+    )
     
     try:
         print(f"{username} の投稿を取得中...")
-        # プロフィール情報の読み込み
         profile = instaloader.Profile.from_username(loader.context, username)
         
         posts_data = []
         
-        # 投稿を新しい順にスキャン
         for post in profile.get_posts():
             if len(posts_data) >= count:
                 break
             
-            # 動画を除外（画像のみを対象）
             if not post.is_video:
                 posts_data.append({
                     "url": post.url,
@@ -26,19 +25,21 @@ def fetch_instagram_posts(username, count=6):
                     "date": post.date_utc.strftime("%Y-%m-%d")
                 })
         
+        # 取得できた件数をログに出力
+        print(f"取得完了: {len(posts_data)}件")
+
         # posts.json という名前で保存
         with open('posts.json', 'w', encoding='utf-8') as f:
             json.dump(posts_data, f, ensure_ascii=False, indent=4)
             
-        print(f"成功: {len(posts_data)}件の投稿を posts.json に書き出しました。")
+        print(f"成功: posts.json を更新しました。")
 
     except Exception as e:
         print(f"エラーが発生しました: {e}")
-        # エラーが起きてもワークフローを止めないよう、最低限の空リストを作る
+        # ファイルが存在しない場合のみ空のリストを作成
         if not os.path.exists('posts.json'):
-            with open('posts.json', 'w') as f:
+            with open('posts.json', 'w', encoding='utf-8') as f:
                 json.dump([], f)
 
 if __name__ == "__main__":
-    # 対象のアカウント名
     fetch_instagram_posts("yasuz.kitchen")
