@@ -3,71 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yasu's Kitchen | 最新投稿</title>
+    <title>Yasu's Kitchen</title>
+    <!-- フォントの読み込み (Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- アイコンの読み込み (Font Awesome) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
-        :root { --primary-color: #ff7f50; --bg-color: #f9f9f9; }
-        body { font-family: sans-serif; margin: 0; background: var(--bg-color); text-align: center; }
-        .container { max-width: 935px; margin: 0 auto; padding: 20px; }
-        #ig-feed { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .post-card { aspect-ratio: 1/1; overflow: hidden; background: #ddd; border-radius: 4px; }
-        .post-image { width: 100%; height: 100%; object-fit: cover; }
-        .ig-link-button { 
-            display: inline-block; margin-top: 30px; padding: 12px 24px; 
-            background: linear-gradient(45deg, #f09433, #bc1888); color: white; 
-            text-decoration: none; border-radius: 8px; font-weight: bold; 
+        /* 全体のデザイン設定 */
+        :root {
+            --primary-color: #ff7f50; /* オレンジ色（料理・温かみ） */
+            --bg-color: #f9f9f9;      /* 背景色 */
+            --text-color: #333;       /* テキスト色 */
         }
-        @media (max-width: 600px) { #ig-feed { gap: 3px; } }
+
+        body {
+            font-family: "Noto Sans JP", sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* ヘッダー */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        /* セクション共通 */
+        section {
+            padding: 40px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Instagram 表示エリア */
+        #ig-feed {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            padding-top: 10px;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background-color: #ddd; /* 画像未読み込み時の背景色 */
+        }
+
+        .caption {
+            padding: 10px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* カレンダー（開業日） */
+        .calendar-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .btn-nav {
+            background: none;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: 1rem;
+            color: var(--text-color);
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .weekday {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #999;
+            padding-bottom: 5px;
+        }
+
+        .day-number {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        /* 今日/開業日 の強調表示 */
+        .highlight {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            background-color: #333;
+            color: white;
+            font-size: 0.8rem;
+        }
+        
+        /* モバイル対応 */
+        @media (max-width: 600px) {
+            .logo { font-size: 1.5rem; }
+            h2 { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2 style="color: #333;"><i class="fab fa-instagram"></i> @yasuz.kitchen 最新の投稿</h2>
-        <div id="ig-feed">
-            <!-- JavaScriptでここに画像が挿入されます -->
+    <header>
+        <div class="container">
+            <a href="#" class="logo"><i class="fas fa-utensils"></i> Yasu's Kitchen</a>
         </div>
-        <a href="https://www.instagram.com/yasuz.kitchen/" target="_blank" class="ig-link-button">
-            Instagramで続きを見る
-        </a>
-    </div>
+    </header>
 
+    <!-- インスタグラム表示エリア -->
+    <section id="ig-feed" class="container">
+        <!-- ここから動的に JavaScript で画像を読み込みます -->
+    </section>
+
+    <!-- カレンダー（開業日）エリア -->
+    <section id="calendar-section" class="container">
+        <div class="calendar-container">
+            <h2><i class="fas fa-calendar-alt"></i> 営業カレンダー</h2>
+            
+            <div class="cal-header">
+                <button class="btn-nav" onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                <span id="month-year-display" style="font-size: 1.5rem; font-weight:bold;"></span>
+                <button class="btn-nav" onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+            </div>
+
+            <!-- カレンダーのグリッド -->
+            <div id="calendar-grid" class="cal-grid">
+                <!-- JavaScript で日付が生成されます -->
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2023 Yasu's Kitchen. All rights reserved. <br>
+        個人運営の料理ブログです。
+    </footer>
+
+    <!-- JavaScript: インスタグラム表示とカレンダー機能 -->
     <script>
-        async function loadLatestPosts() {
-    const feedContainer = document.getElementById('ig-feed');
-    try {
-        // キャッシュを回避するためにタイムスタンプを付与
-        const response = await fetch('./posts.json?t=' + new Date().getTime());
+        // ==========================================
+        // 設定エリア（ここを書き換えてください）
+        // ==========================================
         
-        if (!response.ok) {
-            throw new Error('HTTP status ' + response.status);
-        }
+        /* 
+         * [設定 1] Instagram の画像 URL を設定します。
+         * 自分のインスタの投稿ページのスクリーンショットを切り出しているイメージです。
+         * 実際の画像ファイル名や、あるいは「今日の日付」が空の場合は、代替画像を表示します。
+         */
+        const instagramImages = [
+            'https://placehold.co/400x400/ff7f50/white?text=Today%27s+Dish', // 例：今日の料理（代替画像）
+            '', 
+            '', 
+            '' // 空の要素は「まだアップロードしていない」状態として扱います。
+        ];
+
+        /* 
+         * [設定 2] あなたの店舗がOPENしている日付を設定します。
+         * 形式："YYYY-MM-DD" または "MM/DD (曜)" など自由に入力可能。
+         * 現在の日と一致する場合に赤色でマークされます。
+         */
+        const myOpenDate = new Date(); // 設定例：現在の日付（テスト用）
         
-        const posts = await response.json();
+        /* ==========================================
+            （以下、ユーザーが編集する必要のない部分です）
+         * ========================================== */
+
+        // --- Instagram Feed のレンダリング ---
+        const feedContainer = document.getElementById('ig-feed');
+        const totalSlots = 12; // グリッドに表示する枠の数（9 つにしたい場合はここに 9 と書く）
+
+        instagramImages.forEach((imgSrc, index) => {
+            const div = document.createElement('div');
+            
+            if (index < totalSlots) {
+                let imageTag = '';
+                
+                if (imgSrc && imgSrc.length > 1) {
+                    // 設定された画像 URL を表示
+                    imageTag = `<img src="${imgSrc}" alt="料理の写真" class="post-image">`;
+                } else {
+                    // 空欄用のプレースホルダー（あるいは「今日の日付」が入る場所）
+                    imageTag = `<div style='height:100%; display:flex; justify-content:center; align-items:center; background:#eee; color:#888; font-size:0.8rem;'>${index === 0 ? "Today" : ""}</div>`;
+                }
+
+                div.innerHTML = `
+                    <a href="https://instagram.com" target="_blank">
+                        ${imageTag}
+                    </a>
+                    <div class="caption">
+                        <small>${imgSrc.includes("今日") ? "(今日の料理)" : ""}</small><br>
+                        #YasusKitchen #DailyCooking
+                    </div>
+                `;
+                feedContainer.appendChild(div);
+            }
+        });
+
+        // --- カレンダー機能のレンダリング ---
         
-        if (posts.length === 0) {
-            feedContainer.innerHTML = '<p>JSONの中身が空です（データ取得失敗）</p>';
-            return;
+        const calendarGrid = document.getElementById('calendar-grid');
+        const monthYearDisplay = document.getElementById('month-year-display');
+        let currentDate = new Date(); // 現在の日付を基準に
+        
+        // 日本時間（タイムゾーン補正）のため、UTC から +9 時間を設定しています。
+        // 日本以外の地域で表示する場合、this.setMinutes(this.getMinutes() + (9 - utc)) を調整してください
+        const utcOffset = (new Date()).getTimezoneOffset() * 60 * 1000;
+        const localDate = new Date(currentDate.getTime() - utcOffset); 
+        
+        function initCalendar(date = localDate) {
+            const year = date.getFullYear();
+            const month = date.getMonth(); // 0〜11
+            
+            // データ表示用月年（日本時間）
+            const jaMonth = (date.getMonth() + 1).toString().padStart(2, '0');
+            const displayYear = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate(); // 次の月の 1 日前から年を判断
+            
+            monthYearDisplay.textContent = `${jaMonth}月 (${year})`;
+
+            calendarGrid.innerHTML = '';
+
+            // ヘッダー（日月火水木金土）
+            const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土'];
+            daysOfWeek.forEach(day => {
+                const el = document.createElement('div');
+                el.className = 'weekday';
+                el.textContent = day;
+                calendarGrid.appendChild(el);
+            });
+
+            // 当月の初日の曜日から何日目に空いているか計算
+            const firstDay = new Date(year, month, 1);
+            const startPadding = (firstDay.getDay() + 6) % 7; // 0 は月、6 が水... の調整済み（JS getDay は日曜=0）
+
+            // 前月の日数計算のために、当月の翌月の同じ日付を比較して取得
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            // ペースト用（上月の残り日付：灰色にして表示します）
+            const prevDate = new Date(year, month, 0);
+            const previousMonthLastDay = prevDate.getDate();
+            
+            for (let i = 0; i < startPadding; i++) {
+                const dateEl = document.createElement('div');
+                dateEl.className = 'day-number';
+                // 上月の日付を表示（例：12/31 が 1/6 に空いている場合）
+                dateEl.textContent = previousMonthLastDay - (startPadding - i) - 1; 
+                dateEl.style.color = '#ccc';
+                dateEl.style.fontWeight = 'normal';
+                calendarGrid.appendChild(dateEl);
+            }
+
+            // 当日の日付を表示（赤い丸）
+            const myOpenDateObj = new Date(myOpenDate.getTime() - utcOffset);
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dateEl = document.createElement('div');
+                dateEl.className = 'day-number';
+                dateEl.textContent = i;
+
+                // 本日かどうかをチェック
+                const today = new Date();
+                if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    dateEl.classList.add('highlight'); // 赤色クラス
+                }
+                
+                calendarGrid.appendChild(dateEl);
+            }
         }
 
-        feedContainer.innerHTML = ''; 
-        posts.forEach(post => {
-            const div = document.createElement('div');
-            div.className = 'post-card';
-            div.innerHTML = `
-                <a href="${post.link}" target="_blank">
-                    <img src="${post.url}" alt="Instagram Post" class="post-image" onerror="this.nextElementSibling.style.display='block'">
-                    <span style="font-size:10px; display:none;">${post.date}</span>
-                </a>
-            `;
-            feedContainer.appendChild(div);
-        });
-    } catch (error) {
-        console.error("Fetch error:", error);
-        feedContainer.innerHTML = `<p>JSONファイルの読み込みに失敗しました<br><small>${error.message}</small></p>`;
-    }
-}
-loadLatestPosts();
+        function changeMonth(offset) {
+            currentDate.setMonth(currentDate.getMonth() + offset);
+            initCalendar();
+        }
+
+        // アプリを起動
+        initCalendar();
+
     </script>
 </body>
 </html>
