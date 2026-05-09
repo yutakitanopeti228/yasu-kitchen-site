@@ -34,10 +34,16 @@
 
     <script>
         async function loadLatestPosts() {
+    const feedContainer = document.getElementById('ig-feed');
     try {
-        const response = await fetch('posts.json');
+        // キャッシュを回避するためにタイムスタンプを付与
+        const response = await fetch('./posts.json?t=' + new Date().getTime());
+        
+        if (!response.ok) {
+            throw new Error('HTTP status ' + response.status);
+        }
+        
         const posts = await response.json();
-        const feedContainer = document.getElementById('ig-feed');
         
         if (posts.length === 0) {
             feedContainer.innerHTML = '<p>JSONの中身が空です（データ取得失敗）</p>';
@@ -48,20 +54,19 @@
         posts.forEach(post => {
             const div = document.createElement('div');
             div.className = 'post-card';
-            // 画像が出ない場合に備え、日付を文字で表示させてみる
             div.innerHTML = `
                 <a href="${post.link}" target="_blank">
-                    <img src="${post.url}" alt="Instagram Post" class="post-image" onerror="this.style.display='none'">
-                    <span style="font-size:10px;">${post.date}</span>
+                    <img src="${post.url}" alt="Instagram Post" class="post-image" onerror="this.nextElementSibling.style.display='block'">
+                    <span style="font-size:10px; display:none;">${post.date}</span>
                 </a>
             `;
             feedContainer.appendChild(div);
         });
     } catch (error) {
-        document.getElementById('ig-feed').innerHTML = '<p>JSONファイルの読み込み自体に失敗しています</p>';
+        console.error("Fetch error:", error);
+        feedContainer.innerHTML = `<p>JSONファイルの読み込みに失敗しました<br><small>${error.message}</small></p>`;
     }
 }
-// ページ読み込み時に実行
 loadLatestPosts();
     </script>
 </body>
