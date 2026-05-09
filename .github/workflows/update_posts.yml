@@ -21,7 +21,8 @@ jobs:
         run: pip install instaloader
 
       - name: Run script
-        run: python your_script_name.py # Pythonファイル名を指定
+        # ここを実際のファイル名に合わせて修正しました
+        run: python insta_update.py 
 
       - name: Commit and Push
         run: |
